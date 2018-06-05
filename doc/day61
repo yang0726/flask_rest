@@ -1,0 +1,69 @@
+1.回顾rest接口写法
+
+    1）请求 -----------》响应
+       资源 -----------》结果
+
+       资源： URI 类似于路由
+       动作： post 新增资源   -----》form
+             put 修改某一资源（某一属性）----->form
+             patch 修改多个资源（多个属性）----->form
+             delete 删除资源
+             get  查询资源 ----->get('id')
+       结果： 返回json数据
+             jsonify({})
+             json.dumps(obj,cls  是自定义的JSONEncoder)
+
+             如果数据是list[xxxModel]包含了object类对象，则要自定义
+             转json的编码器（JSONEncoder）或声明@propery def json(self):return {}
+
+2.flask-restful 扩展库
+    1)安装 pip install flask-restful
+    2)创建 Api(app)或api
+        from flask-restful import Api
+        api =Api(app)
+    3)创建Resource子类：Resource 是rest-ful中的类
+        class UserApi(Resource)
+            def get(self):  #rest的get请求动作
+                pass
+            def post(self):
+                pass
+            def put(self):
+                pass
+            def patch(self):
+                pass
+            def delete(self):
+                pass
+    4)将resource 添加到api对象中
+        api.add_source(UserApi,'/user/',endpoint='user')
+        endpoint 类似于Django中路由中的name
+
+
+3.flask-sqlacodegen 第三方扩展库的使用
+  作用：从数据库端，将库中的表生成flask-sqlalchemy相关的模型类
+  1）pip install flask-sqlacodegen
+  2) pip install flask-pymysql
+
+  4)flask-sqlacodegen --outfile models.py mysql+pymysql://root:ROOT@192.168.80.135/user
+  5)声明dao.py
+  说明：DAO  数据访问对象，封装对所有模型的CRUD操作
+
+
+    a)
+        db= SQLAlchemy(app)
+
+    b)声明相关的函数来实现CURD操作
+        def query(cls)   # 返回Basequery对象
+            db.session.query(cls)
+
+        def delete(obj):
+            db.session.delete(obj)
+            db.session.commit()
+
+        def add(obj):  #  添加 或 更新
+            db.session.add(obj)
+            db.session.commit()
+    6）在api.py文件中 导入dao.py和models.py
+
+
+    任务：实现删除操作
+        优化post函数

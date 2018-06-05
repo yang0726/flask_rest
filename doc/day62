@@ -1,0 +1,158 @@
+一.flask-restful
+    1) rest是一种设计规范，
+    为了适应移动端和服务端，前后端分离，
+    让请求的数据最小化，最优化。
+    提供了资源resource和标识URI（统一资源标识符）和动作等概念
+
+
+   2）在服务端（flask项目）提供一个api脚本，声明对资源Respurce的操作
+
+     class UserApi(Resource)
+     # from flask_restful import Resource
+     #  声明相关动作（get，put,post,delete,patch）
+
+     def get(self):
+     return{}
+
+   3)为资源添加一个uri
+    api = Api(app)   # from flask_restful import Api
+    api.add_resource(UserResource,'/user/')
+
+   4)定制输入，输出
+        a)定制输入
+        #  from flask_restful import reqparse
+        parser = reqparse.RequestParser()
+        #  添加输入（请求）参数的说明
+        parser.add_argument('参数名'，type=int/str,
+        required=True/False,help='验证失败的msg'，
+        location ='参数来源（args，form,files,cookies）')
+
+   # 在动作处理函数中，通过parser_args（）函数验证请求是否符合条件
+   def get(self):
+      args = self.parser.parse_args()    #  不满足，自动返回
+
+
+        # 满足参数条件，业务实现
+      xxx = args.get('参数名')
+      return {}
+
+   # 定制输出参数
+   # from flask_restful import marshal_with,marshal,fields
+
+
+     #声明users中每个元素（User类对象）的输出格式
+     user_fields = {'id':fields.Integer,
+                       'name':fields.String,
+                       'phone':fields.String}
+     out_fields = {'msg':fields.String,
+                    'data':fields.Nested(user_fields)}
+
+
+   1）@marshal_with(out_fields)   #  声明输出字段
+      def get(self)
+          data = {'msg':'vvs','data': users}  # users =[<class User>,<class User>]
+          return data
+
+
+   2)marshal(data,fields)
+     user_fields = {'id':fields.Integer,
+                       'name':fields.String,
+                       'phone':fields.String}
+     out_fields = {'msg':fields.String,
+                    'data':fields.Nested(user_fields)}
+
+     def get(self):
+        data = {'msg':'vvs','data': users}
+        return marshal(data,out_fields)
+
+
+   5）文件上传
+        前端核心代码：
+           function uploadImg(file){
+             var formdata = FormData()
+             formdata.append('参数名'，file)   # file 是js的文件类对象,  参数名：
+
+             $,ajax('/upload/',{
+              type:'post',
+              data: formdata   // 默认类型为multipart/form-data
+              contentType:false,  // 对上传的数据不做编码处理
+              processData：false , // 不足任何处理
+              datatype:'json'
+              success:function(data){
+                  // 文件上传成功后的回调函数
+
+              }
+             })
+           }
+           后端：
+           class UploadApi(Resource):
+           #  from werkzeug.datastructures import FileStorage
+            parser = reqparse.RequestParser()
+            parser.add_argument('img',type =FileStorage,location='files')
+            def post(self):
+        字典<------args = self.parser.parser_args()
+             uFile:fileStorage  = args.get('img')
+             uFile.save('/users/yang/uploads'+uFile.filename)
+
+
+             return {'msg':}
+
+
+             扩展：在settings.py 设计BASE_DIR,STATIC_DIR/MEDIA_DIR
+
+             1）获取settings.py文件的绝对路径：
+             os.path.abspath(__name__)
+
+             2)获取settings.py所在目录
+             os.path.dirname(abspath)
+
+             3)获取settings.py所在目录的static目录
+             static_dir = os.path.join(base_dir,'static')
+
+             4)相对于settings.py所在目录的static目录的uploads目录
+             media_dir = os.path,join(static_dir,'uploads')
+
+二、pycharm中使用git工具将项目提交到GitHub上
+    1） 本地安装git工具
+        Ubuntu：
+            sudo install git
+        window：
+            http://git-scm.com
+    2)在GitHub上注册账号
+    3）打开pycharm工具，设置git命令的位置和GitHub账号
+    windonw:crtl+alt+s  打开设置页面 (file-->settings)
+    mac:command+, 打开设置页面
+    在版本控制  Version Control：
+        git : git 命令所在的位置设置路径
+
+        注意：Windows环境需要将git位置配置到环境变量中
+
+    github :输入在github s上注册的账号和密码
+
+    4）在github上创建仓库，
+        将仓库的位置http://vgrgdgv.fvs/ggg.git复制
+
+    5）在项目环境下（根目录），初始化本地仓库，并添加远程仓库的配置
+
+    6)
+
+    git checkout -b  v1.1(name) 创建分支，同时切换分支
+    git add .
+    git commit -m
+    git push
+    如果不能先 git pull
+
+
+跟踪：  文件—————>Git---->+add--->
+
+写入文件
+echo {'df':'df'} >> db.json
+
+git log  查看日志
+
+git merge v1.1  (合并v1.1到当前的分支)
+
+git clone https://github.com/yang0726/flaskrest.git
+文件---->Git---->仓库----->push
+
+
